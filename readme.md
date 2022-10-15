@@ -6,7 +6,7 @@
 
 #### Details:
 
-Frontend built with mainly React.js and React hooks. There are 3 views (Feed page, Login page, and Profile page), with responsive pages for every view. Styles are mainly made with TailwindCSS.
+Frontend built with mainly **React.js** and **React hooks**. There are 3 views (Feed page, Login page, and Profile page), with responsive pages for every view. Styles are mainly made with **TailwindCSS**.
 
 #### Screenshots:
 

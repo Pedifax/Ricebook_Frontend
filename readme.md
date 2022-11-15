@@ -49,4 +49,7 @@ Dummy users to try this website (from [jsonplaceholder](https://jsonplaceholder.
 
 ### Next Steps (ETA Dec. 1st)
 
-- Connect frontend and the backend 
+- Connect with the frontend
+- Incorporate AWS S3 for image storage
+- Incorporate Redis caching store
+- Ready to crowd's usage

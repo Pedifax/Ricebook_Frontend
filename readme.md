@@ -27,6 +27,13 @@ Dummy users to try this website (from [jsonplaceholder](https://jsonplaceholder.
 - username: <code>Antonette</code>, password: <code>Victor Plains</code>
 - Your welcomed to try the register function as well!
 
+### Next Steps (ETA Dec. 1st)
+
+- Connect with the frontend
+- Incorporate AWS S3 for image storage
+- Incorporate Redis caching store
+- Ready to crowd's usage
+
 ### Screenshots:
 
 #### Feed
@@ -46,10 +53,3 @@ Dummy users to try this website (from [jsonplaceholder](https://jsonplaceholder.
 #### Jest testing
 
 ![image-unit-tests](/unit-tests.png)
-
-### Next Steps (ETA Dec. 1st)
-
-- Connect with the frontend
-- Incorporate AWS S3 for image storage
-- Incorporate Redis caching store
-- Ready to crowd's usage

@@ -88,6 +88,7 @@ const Input = (props) => {
         onChange={changeHandler}
         onBlur={touchHandler} // so the user won't get warning input field right from the start
         value={inputState.value} // 2-way binding
+        data-testid={props.testid}
       />
     ) : (
       <textarea
@@ -97,6 +98,7 @@ const Input = (props) => {
         onChange={changeHandler}
         onBlur={touchHandler}
         value={inputState.value} // 2-way binding
+        data-testid={props.testid}
       />
     );
 

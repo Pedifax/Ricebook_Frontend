@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Input from "../../../shared/components/form/Input";
 
 import Button from "../../../shared/components/UIs/Button";
 
@@ -11,26 +10,30 @@ const AddFollowingBar = (props) => {
   };
 
   const followClickHandler = (username_to_follow) => {
-    props.onFollow(username_to_follow);
-    setInputAreaContent("");
+    let res = props.onFollow(username_to_follow);
+    if (res) {
+      setInputAreaContent("");
+    }
   };
 
   const content = (
     <React.Fragment>
-      <div className="md:max-w-sm  flex-col items-center bg-white rounded-xl border shadow-md">
-        <div className="md:flex-row md:max-w-sm flex flex-col items-center bg-white rounded-xl ">
+      <div className="flex rounded-xl border bg-white px-2 shadow-md">
+        <div className="flex w-full items-center justify-center space-x-4 rounded-xl bg-white py-2">
           <input
-            type={"text"}
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-cyan-400 focus:border-cyan-400 block w-8/12  outline-none focus:outline-none"
-            placeholder="Follow new people"
+            type="text"
+            className="flex w-2/3 rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900 outline-none focus:border-cyan-400  focus:outline-none focus:ring-cyan-400"
+            placeholder="Follow others by username"
             onChange={inputAreaOnChangeHandler}
             value={input_area_content}
+            data-testid="follow_bar"
           />
           <Button
-            className="w-4/12 p-2 mt-2"
+            className="flex w-1/3"
             onClick={() => {
               followClickHandler(input_area_content);
             }}
+            testid='follow_button'
           >
             Follow
           </Button>

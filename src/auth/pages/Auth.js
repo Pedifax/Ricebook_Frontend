@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useHistory } from "react-router-dom";
 
 import Input from "../../shared/components/form/Input";
@@ -12,6 +12,8 @@ const error_text_style = "text-sm text-red-400 text-center mb-3";
 const Auth = () => {
   const { isLoading, error, sendRequest, clearError } = useHttpRequest();
   const [password_mismatch, setPasswordMismatch] = useState(false);
+  const [login_warning, setLoginWarning] = useState(false);
+  const [username_warning, setUsernameWarning] = useState(false);
   const [bottom_warning, setBottomWarning] = useState();
   const [is_login_mode, setIsLoginMode] = useState(true);
   const app_context = useContext(AppContext);
@@ -23,7 +25,7 @@ const Auth = () => {
         const responseData = await sendRequest(
           `https://jsonplaceholder.typicode.com/users`
         );
-        localStorage.setItem("users", JSON.stringify({ responseData }));
+        localStorage.setItem("users", JSON.stringify(responseData));
       } catch (err) {}
     };
     fetchUser();
@@ -36,9 +38,7 @@ const Auth = () => {
           `https://jsonplaceholder.typicode.com/posts`
         );
 
-        localStorage.setItem("posts", JSON.stringify({ responseData }));
-        // console.log("fixed posts:");
-        // console.log(JSON.parse(localStorage.getItem("posts")));
+        localStorage.setItem("posts", JSON.stringify(responseData));
       } catch (err) {}
     };
     fetchPosts();
@@ -98,10 +98,9 @@ const Auth = () => {
   // }, []);
 
   const switchModeHandler = () => {
-    console.log("switch mode!");
-
     if (!is_login_mode) {
       // switching from register mode to login mode. Need to drop some fields.
+      let latest_formState_inputs = { ...formState.inputs };
       setForm(
         {
           ...formState.inputs,
@@ -110,8 +109,14 @@ const Auth = () => {
           phone_number: undefined,
           zip: undefined,
         },
-        formState.inputs.username.isValid && formState.inputs.password.isValid
+        // formState.inputs.username.isValid && formState.inputs.password.isValid
+        latest_formState_inputs.username.isValid &&
+          latest_formState_inputs.password.isValid
       );
+      setPasswordMismatch(false);
+      setUsernameWarning(false);
+      // console.log("formState =");
+      // console.log({ ...formState });
     } else {
       setForm(
         {
@@ -121,6 +126,8 @@ const Auth = () => {
       );
       setPasswordMismatch(false);
     }
+    setLoginWarning(false);
+    // setBottomWarning("Wrong credential.");
     setIsLoginMode((last_mode) => !last_mode);
   };
   //
@@ -128,6 +135,14 @@ const Auth = () => {
   //
   //
   //
+
+  const isNewUsernameValid = (new_username, users) => {
+    let matches = users.filter((user) => user.username === new_username);
+    if (matches.length > 0) {
+      return false;
+    }
+    return true;
+  };
 
   const authSubmitHandler = (event) => {
     event.preventDefault();
@@ -160,6 +175,7 @@ const Auth = () => {
     }
 
     // -----------------------------------------------------------------------
+    let users = JSON.parse(localStorage.getItem("users"));
 
     // Login or register:
     if (is_login_mode) {
@@ -167,27 +183,31 @@ const Auth = () => {
         ...formState.inputs,
       };
 
-      let users = JSON.parse(localStorage.getItem("users")).responseData;
+      // let users = JSON.parse(localStorage.getItem("users")).responseData;
+      // let users = JSON.parse(localStorage.getItem("users"));
       let matches = users.filter(
         (user) =>
           user.username === cur_formState_inputs.username.value &&
           user.address.street === cur_formState_inputs.password.value
       );
       // matches is an array! Be careful!
-      if (matches.length == 1) {
+      if (matches.length === 1) {
         let loggedInUser = matches[0];
-        console.log("In Login, loggedInUser = ");
-        console.log(loggedInUser);
+        // console.log("In Login, loggedInUser = ");
+        // console.log(loggedInUser);
 
-        localStorage.setItem("cur_user", JSON.stringify({ loggedInUser }));
-        console.log("The thing in local storage = ");
-        console.log(JSON.parse(localStorage.getItem("cur_user")).loggedInUser);
+        localStorage.setItem("cur_user", JSON.stringify(loggedInUser));
+        // console.log("The thing in local storage = ");
+        // console.log(JSON.parse(localStorage.getItem("cur_user")).loggedInUser);
+        // console.log(JSON.parse(localStorage.getItem("cur_user")));
 
         app_context.login(loggedInUser.id);
         // history.push("/feed");
-        console.log("logged in.");
+        // console.log("logged in.");
       } else {
-        console.log("login FAILED. No matched user.");
+        setLoginWarning(true);
+        setBottomWarning("Wrong credential.");
+        // console.log("login FAILED. No matched user.");
       }
       return;
     }
@@ -197,6 +217,15 @@ const Auth = () => {
       let cur_formState_inputs = {
         ...formState.inputs,
       };
+
+      // check if user already exists:
+      let new_username = cur_formState_inputs.username.value;
+      if (!isNewUsernameValid(new_username, users)) {
+        setUsernameWarning(true);
+        setBottomWarning("The username is already taken.");
+        return;
+      }
+
       const loggedInUser = {
         id: 11,
         username: cur_formState_inputs.username.value,
@@ -207,32 +236,37 @@ const Auth = () => {
         email: cur_formState_inputs.email.value,
         phone: cur_formState_inputs.phone_number.value,
         company: {
-          catchPhrase: "I'm feeling sleepy today!",
+          catchPhrase: "No status yet. Create one?",
         },
       };
-      console.log("In registration, loggedInUser = ");
-      console.log("loggedInUser");
-      console.log(loggedInUser);
+      // console.log("In registration, loggedInUser = ");
+      // console.log("loggedInUser:");
+      // console.log(loggedInUser);
 
       app_context.login(11);
-      localStorage.setItem("cur_user", JSON.stringify({ loggedInUser }));
-      let cur_user = JSON.parse(localStorage.getItem("cur_user")).loggedInUser;
+      // localStorage.setItem("cur_user", JSON.stringify({ loggedInUser }));
+      localStorage.setItem("cur_user", JSON.stringify(loggedInUser));
+      // let cur_user = JSON.parse(localStorage.getItem("cur_user")).loggedInUser;
+      // let cur_user = JSON.parse(localStorage.getItem("cur_user"));
 
-      console.log("logged in with a new account.");
-      console.log("the account is:");
-      console.log(cur_user);
+      // console.log("registered and logged in with a new account.");
+      // console.log("the account is:");
+      // console.log(cur_user);
     }
   };
 
   return (
     <React.Fragment>
-      <h1 className="text-lg text-black text-center mt-3">
+      <h1
+        className="mt-3 text-center text-lg text-black"
+        data-testid="auth_title"
+      >
         {is_login_mode ? "Login" : "Register"}
       </h1>
-      <hr className="ml-10 mr-10 mb-5" />
+      <hr className="ml-10 mr-10 mb-5" data-testid="hr" />
       {/* <form className="ml-10 mr-10 " onSubmit={authSubmitHandler}> */}
       <div className="ml-10 mr-10 ">
-        <div>
+        <div className="">
           {/* USERNAME */}
           <Input
             type="text"
@@ -242,6 +276,7 @@ const Auth = () => {
             error_message="Please input a valid username."
             placeholder="example: Pewdepie"
             onInput={inputHandler}
+            testid="input_username"
           />
           {/* PASSWORD */}
           <Input
@@ -252,6 +287,7 @@ const Auth = () => {
             error_message="Please input a password. Make sure it matches the below confirmation."
             onInput={inputHandler}
             // onInput={passwordOnInputHandler}
+            testid="input_password"
           />
 
           {/* IF IN REGISTER MODE: */}
@@ -265,6 +301,7 @@ const Auth = () => {
               error_message="Please confirm the password and make sure they match."
               onInput={inputHandler}
               // onInput={passwordOnInputHandler}
+              testid="input_password_confirmation"
             />
           )}
           {!is_login_mode && (
@@ -277,10 +314,11 @@ const Auth = () => {
               error_message="Please enter a valid email address."
               placeholder="example@rice.com"
               onInput={inputHandler}
+              testid="input_email"
             />
           )}
           {!is_login_mode && (
-            <div className="grid gap-6 mb-6 md:grid-cols-2">
+            <div className="mb-6 grid gap-6 md:grid-cols-2">
               {/* PHONE NUMBER */}
               <div>
                 <Input
@@ -291,6 +329,7 @@ const Auth = () => {
                   error_message="Enter a valid phone number."
                   onInput={inputHandler}
                   placeholder="ex: 111-222-3333"
+                  testid="input_phone_number"
                 />
               </div>
               {/* ZIP CODE */}
@@ -303,16 +342,20 @@ const Auth = () => {
                   error_message="Please input a valid zip."
                   onInput={inputHandler}
                   placeholder="example: 11111"
+                  testid="zip"
                 />
               </div>
             </div>
           )}
         </div>
-        <div className="flex flex-col md:max-w-xs ml-auto mr-auto">
+        <div className="ml-auto mr-auto flex flex-col space-y-2 md:max-w-xs">
           <p
             className={`${
-              password_mismatch ? "block" : "invisible"
+              password_mismatch || login_warning || username_warning
+                ? "block"
+                : "invisible"
             } ${error_text_style}`}
+            data-testid='bottom_warning_EL'
           >
             {bottom_warning}
           </p>
@@ -320,10 +363,11 @@ const Auth = () => {
             type="submit"
             disabled={!formState.isValid}
             onClick={authSubmitHandler}
+            testid="submit_button"
           >
             {is_login_mode ? "Login" : "Register"}
           </Button>
-          <Button onClick={switchModeHandler}>
+          <Button onClick={switchModeHandler} testid="switch_mode_button">
             Switch to {`${is_login_mode ? "Registration" : "Login"}`}
           </Button>
         </div>

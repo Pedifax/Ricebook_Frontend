@@ -24,20 +24,23 @@ const UserCardForUpdate = (props) => {
 
   const content = (
     <React.Fragment>
-      <div className="flex flex-col text-center w-1/4 bg-white space-y-1 py-3 rounded-xl border shadow-md place-content-center">
+      <div className="flex w-1/4 flex-col place-content-center space-y-1 rounded-xl border bg-white py-3 text-center shadow-md" placeholder="user_card">
         {/* <div className="md:flex-row md:max-w-sm flex flex-col items-center bg-white rounded-xl "> */}
         <img
-          className="w-1/3 m-auto rounded-full"
+          className="m-auto w-1/3 rounded-full"
           src={require(`../../images/ImagesForDev/UserImages/user_image_${url_tail}.jpeg`)}
           alt=""
         />
-        <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 p-4">
+        <h5 className="mb-2 p-4 text-2xl font-bold tracking-tight text-gray-900" placeholder="username">
           {props.name}
         </h5>
-        <div className="align-bottom flex-row flex">
+        <h5 className="mb-2 text-lg text-gray-900 ">
+          Birthday: {props.birthday}
+        </h5>
+        <div className="flex flex-row align-bottom">
           <button
             type="button"
-            className="m-auto flex justify-center p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 "
+            className="m-auto flex cursor-pointer justify-center rounded p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 "
             onClick={pickImageHandler}
           >
             <svg

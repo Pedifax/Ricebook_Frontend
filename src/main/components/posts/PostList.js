@@ -7,7 +7,7 @@ const PostList = (props) => {
     return (
       <div className="">
         <h2 className="bg-red-300 text-black">
-          No places found. Maybe create one?
+          No existing post from you and following users. Create one?
         </h2>
       </div>
     );
@@ -18,13 +18,15 @@ const PostList = (props) => {
       {/* props.posts要改成filter過後的posts */}
       {props.posts.map((post) => (
         <PostItem
-          key={post.id}
-          id={post.id}
+          text_only={false || post.text_only}
+          key={post.id} // 1 ~ 40
+          id={post.id} // 1 ~ 40
           userId={post.userId}
-          username={props.username}
+          username={post.username}
           title={post.title}
           body={post.body}
           timestamp={post.timestamp}
+          testid={post.id} // 1 ~ 40
         />
       ))}
     </div>

@@ -1,17 +1,17 @@
-import React, { useCallback, useState, useContext, useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+// import { useHistory } from "react-router-dom";
 
 import { validate } from "../../shared/tools/validators";
 // import Input from "../../shared/components/form/Input";
 import Button from "../../shared/components/UIs/Button";
-import { useFormState } from "../../shared/hooks/form-state-hook";
-import { AppContext } from "../../shared/context/app-context";
-import UserCard from "../../shared/components/UserCard/UserCard";
+// import { useFormState } from "../../shared/hooks/form-state-hook";
+// import { AppContext } from "../../shared/context/app-context";
+// import UserCard from "../../shared/components/UserCard/UserCard";
 import UserCardForUpdate from "../../shared/components/UserCard/UserCardForUpdate";
 
-const passwordStar = (target) => {
-  return "*".repeat(target.length);
-};
+// const passwordStar = (target) => {
+//   return "*".repeat(target.length);
+// };
 
 const input_style =
   "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-cyan-400 focus:border-cyan-400 block w-full p-2";
@@ -38,7 +38,8 @@ const Profile = () => {
   });
 
   useEffect(() => {
-    setCurUser(JSON.parse(localStorage.getItem("cur_user")).loggedInUser);
+    // setCurUser(JSON.parse(localStorage.getItem("cur_user")).loggedInUser);
+    setCurUser(JSON.parse(localStorage.getItem("cur_user")));
   }, []);
 
   useEffect(() => {}, [cur_user]);
@@ -190,10 +191,10 @@ const Profile = () => {
 
     // OUTPUT
     if (is_valid) {
-      console.log("success");
+      // console.log("success");
       output_message = "Profile updated successfully.";
     } else {
-      console.log("fail");
+      // console.log("fail");
     }
 
     setBottomInfo({
@@ -204,12 +205,13 @@ const Profile = () => {
 
   return (
     <React.Fragment>
-      <h1 className="text-lg text-black text-center mt-3">Profile</h1>
+      <h1 className="mt-3 text-center text-lg text-black">Profile</h1>
       <hr className="ml-10 mr-10 mb-5" />
       <div className="flex place-content-center">
         <UserCardForUpdate
           name={cur_user.username === undefined ? "" : cur_user.username}
           id={cur_user.id === undefined ? "" : cur_user.id}
+          birthday="1970/10/27"
         />
       </div>
       <form className="ml-10 mr-10 mt-2">
@@ -219,11 +221,13 @@ const Profile = () => {
             <span className={error_text_style}>{all_error_msg.username}</span>
           </label>
           <input
+            disabled={true}
             type="username"
             id="username"
             className={input_style}
             value={cur_user.username === undefined ? "" : cur_user.username}
             onChange={handleUsername}
+            data-testid="input_username"
           />
         </div>
 
@@ -240,6 +244,7 @@ const Profile = () => {
               cur_user.address === undefined ? "" : cur_user.address.street
             }
             onChange={handlePassword}
+            data-testid="input_password"
           />
         </div>
 
@@ -260,6 +265,7 @@ const Profile = () => {
                 : cur_user.password_confirmation
             }
             onChange={handlePasswordConfirmation}
+            data-testid="input_password_confirmation"
           />
         </div>
 
@@ -274,13 +280,14 @@ const Profile = () => {
             className={input_style}
             value={cur_user.email === undefined ? "" : cur_user.email}
             onChange={handleEmail}
+            data-testid="input_email"
           />
         </div>
 
-        <div className="grid gap-6 mb-6 md:grid-cols-2">
+        <div className="mb-6 grid gap-6 md:grid-cols-2">
           <div className="mb-6">
             <label htmlFor="phone_number" className={label_style}>
-              Email
+              Phone Number
               <span className={error_text_style}>
                 {all_error_msg.phone_number}
               </span>
@@ -291,6 +298,7 @@ const Profile = () => {
               className={input_style}
               value={cur_user.phone === undefined ? "" : cur_user.phone}
               onChange={handlePhone}
+              data-testid="input_phone_number"
             />
           </div>
 
@@ -307,23 +315,34 @@ const Profile = () => {
                 cur_user.address === undefined ? "" : cur_user.address.zipcode
               }
               onChange={handleZip}
+              data-testid="input_zip"
             />
           </div>
         </div>
 
-        <div className="flex flex-col md:max-w-xs ml-auto mr-auto">
+        <div className="ml-auto mr-auto flex flex-col md:max-w-xs">
           <p
             className={`block ${
               bottom_info.is_valid
                 ? success_text_style
                 : update_error_text_style
             }`}
+            data-testid="bottom_info"
           >
             {bottom_info.message_to_show}
           </p>
-          <Button onClick={submitHandler}>Update</Button>
+          <Button onClick={submitHandler} testid="update_button">
+            Update
+          </Button>
         </div>
       </form>
+      <br></br>
+      <br></br>
+      <br></br>
+      <br></br>
+      <br></br>
+      <br></br>
+      <br></br>
     </React.Fragment>
   );
 };

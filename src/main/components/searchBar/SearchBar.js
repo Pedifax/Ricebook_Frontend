@@ -5,27 +5,27 @@ const SearchBar = (props) => {
   const [input_area_content, setInputAreaContent] = useState("");
 
   const inputAreaOnChangeHandler = (event) => {
+    // console.log("input changed");
     setInputAreaContent(event.target.value);
     props.onSearch(event.target.value);
   };
 
   const content = (
-    <React.Fragment>
-      <div className="md:max-w-sm  flex-col items-center bg-white rounded-xl border shadow-md">
-        <div className="md:flex-row md:max-w-sm flex flex-col items-center bg-white rounded-xl ">
-          <input
-            type={"text"}
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-cyan-400 focus:border-cyan-400 block w-8/12  outline-none focus:outline-none"
-            placeholder="🔎"
-            onChange={inputAreaOnChangeHandler}
-            value={input_area_content}
-          />
-          <Button className="w-4/12 p-2" onClick={inputAreaOnChangeHandler}>
-            Search
-          </Button>
-        </div>
+    <div className="rounded-xl border bg-white px-2 shadow-md md:max-w-sm">
+      <div className=" items-center space-x-4 rounded-xl bg-white py-2 md:max-w-sm md:flex-row">
+        <input
+          type="text"
+          className="flex w-full rounded-lg border border-gray-300 bg-gray-50 text-sm text-gray-900 outline-none focus:border-cyan-400  focus:outline-none focus:ring-cyan-400"
+          placeholder="🔎 Search by author or text"
+          onChange={inputAreaOnChangeHandler}
+          value={input_area_content}
+          data-testid='search_bar'
+        />
+        {/* <Button className="w-4/12" onClick={inputAreaOnChangeHandler}>
+          Search
+        </Button> */}
       </div>
-    </React.Fragment>
+    </div>
   );
 
   return content;

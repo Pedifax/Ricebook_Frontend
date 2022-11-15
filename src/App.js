@@ -22,7 +22,9 @@ const App = () => {
   const logout = useCallback(() => {
     setIsLoggedIn(false);
     setLoggedUserId(null);
+    let stored_headline = localStorage.getItem("stored_headline");
     localStorage.clear();
+    localStorage.setItem("stored_headline", stored_headline);
   }, []);
 
   useEffect(() => {
@@ -30,7 +32,7 @@ const App = () => {
     if (loggedInUser) {
       login(loggedInUser.id);
     }
-  }, []);
+  }, [login]);
 
   let routes;
 

@@ -24,33 +24,34 @@ const NavigationBar = () => {
         <SideDrawer drawer_is_open onClick={closeDrawerHandler} />
       )}
 
-      <div className="bg-white border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800 flex flex-wrap justify-between items-center mx-auto">
+      <div className="mx-auto flex flex-wrap items-center justify-between border-gray-200 bg-white px-4 py-2.5 dark:bg-gray-800 lg:px-6">
         <NavLink to="/" className="flex items-center" exact>
           <img
             src={require("../../images/logo.png")}
             className="mr-1 h-6 sm:h-9"
             alt="Flowbite Logo"
           />
-          <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
+          <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
             Ricebook
           </span>
         </NavLink>
 
         <div className="flex items-center">
           <NavLink to="/" exact>
-            <span className="hidden md:block text-gray-800  hover:bg-gray-100 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 md:px-5 py-2 md:py-2.5 mr-2 focus:outline-none">
+            <span className="mr-2 hidden rounded-lg  px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-300 md:block md:px-5 md:py-2.5">
               Feed
             </span>
           </NavLink>
           <NavLink to="/profile" exact>
-            <span className="hidden md:block text-gray-800  hover:bg-gray-100 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 md:px-5 py-2 md:py-2.5 mr-2 focus:outline-none">
+            <span className="mr-2 hidden rounded-lg  px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-300 md:block md:px-5 md:py-2.5">
               Profile
             </span>
           </NavLink>
           {app_context.isLoggedIn && (
             <button
-              className="hidden md:block text-gray-800 hover:text-white hover:bg-pink-600 font-medium rounded-lg text-sm px-4 md:px-5 py-2 md:py-2.5 mr-2 focus:outline-none"
+              className="mr-2 hidden rounded-lg px-4 py-2 text-sm font-medium text-gray-800 hover:bg-red-500 hover:text-white focus:outline-none md:block md:px-5 md:py-2.5"
               onClick={app_context.logout}
+              data-testid='logout_button'
             >
               Logout
             </button>
@@ -59,14 +60,14 @@ const NavigationBar = () => {
           <button
             // data-collapse-toggle="mobile-menu-2"
             // type="button"
-            className="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 "
+            className="ml-1 inline-flex items-center rounded-lg p-2 text-sm text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 md:hidden "
             // aria-controls="mobile-menu-2"
             // aria-expanded="false"
             onClick={openDrawerHandler}
           >
             <span className="sr-only">Open main menu</span>
             <svg
-              className="w-6 h-6"
+              className="h-6 w-6"
               fill="currentColor"
               viewBox="0 0 20 20"
               xmlns="http://www.w3.org/2000/svg"
@@ -78,7 +79,7 @@ const NavigationBar = () => {
               ></path>
             </svg>
             <svg
-              className="hidden w-6 h-6"
+              className="hidden h-6 w-6"
               fill="currentColor"
               viewBox="0 0 20 20"
               xmlns="http://www.w3.org/2000/svg"

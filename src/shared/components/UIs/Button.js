@@ -18,16 +18,16 @@ const Button = (props) => {
   switch (props.kind) {
     case "warning":
       style +=
-        "text-red-400 hover:text-white border border-red-400 hover:bg-red-500 focus:outline-none font-medium rounded-lg text-md px-5 py-2.5 text-center ml-2 mr-2 mb-2 ";
+        "text-red-400 hover:text-white border border-red-400 hover:bg-red-500 focus:outline-none font-medium rounded-lg text-md px-5 py-2.5 text-center";
       break;
     case "comment":
     case "post":
       style +=
-        "text-green-400 hover:text-white border border-green-300 hover:bg-green-400  focus:outline-none font-medium rounded-lg text-md px-5 py-2.5 text-center mr-2 mb-2";
+        "text-green-400 hover:text-white border border-green-300 hover:bg-green-400  focus:outline-none font-medium rounded-lg text-md px-5 py-2.5 text-center";
       break;
     default:
       style +=
-        "bg-gray-50 border text-cyan-500 hover:text-white hover:bg-cyan-400  focus:outline-none font-medium rounded-lg text-md px-5 py-2.5 text-center mb-2 ring-cyan-400 border-cyan-400";
+        "bg-gray-50 border text-cyan-500 hover:text-white hover:bg-cyan-400 focus:outline-none font-medium rounded-lg text-md px-5 py-2.5 text-center ring-cyan-400 border-cyan-400";
   }
 
   // <Link> Button
@@ -45,6 +45,7 @@ const Button = (props) => {
         onClick={props.onClick}
         disabled={props.disabled}
         className={style}
+        data-testid={props.testid}
       >
         {/* <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white rounded-md group-hover:bg-opacity-0"> */}
         {props.children}

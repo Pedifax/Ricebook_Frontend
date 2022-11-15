@@ -10,7 +10,7 @@ const SideDrawer = (props) => {
     <div onClick={props.onClick}>
       <div
         id="drawer-navigation"
-        className="fixed z-40 h-screen p-4 overflow-y-auto bg-white w-48 dark:bg-gray-800"
+        className="fixed z-40 h-screen w-48 overflow-y-auto bg-white p-4 dark:bg-gray-800"
         tabIndex="-1"
         aria-labelledby="drawer-navigation-label"
       >
@@ -20,39 +20,39 @@ const SideDrawer = (props) => {
             className="mr-1 h-6 sm:h-9"
             alt="Ricebook Logo"
           />
-          <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
+          <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
             Ricebook
           </span>
         </NavLink>
 
-        <div className="py-4 overflow-y-auto">
+        <div className="overflow-y-auto py-4">
           <ul className="space-y-2">
             <li>
               <NavLink
                 to="/"
-                className="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                className="flex items-center rounded-lg p-2 text-base font-normal text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
               >
                 <svg
                   aria-hidden="true"
-                  className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                  className="h-6 w-6 flex-shrink-0 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
                 </svg>
-                <span className="flex-1 ml-3 whitespace-nowrap">Feed</span>
+                <span className="ml-3 flex-1 whitespace-nowrap">Feed</span>
               </NavLink>
             </li>
 
             <li>
               <NavLink
                 to="/profile"
-                className="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+                className="flex items-center rounded-lg p-2 text-base font-normal text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
               >
                 <svg
                   aria-hidden="true"
-                  className="flex-shrink-0 w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                  className="h-6 w-6 flex-shrink-0 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                   xmlns="http://www.w3.org/2000/svg"
@@ -63,13 +63,13 @@ const SideDrawer = (props) => {
                     clipRule="evenodd"
                   ></path>
                 </svg>
-                <span className="flex-1 ml-3 whitespace-nowrap">Profile</span>
+                <span className="ml-3 flex-1 whitespace-nowrap">Profile</span>
               </NavLink>
             </li>
             <li>
               {app_context.isLoggedIn && (
                 <button
-                  className="text-gray-800 bg-pink-400 font-medium rounded-lg text-sm px-4  py-2  mr-2 focus:outline-none w-32"
+                  className="mr-2 w-32 rounded-lg bg-red-400 px-4 py-2  text-sm  font-medium text-gray-800 focus:outline-none"
                   onClick={() => {
                     app_context.logout();
                   }}

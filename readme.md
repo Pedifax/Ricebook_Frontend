@@ -1,22 +1,27 @@
 # Social Media Web App 2
 
-### URL to the deployed forntend site: [Surge](http://ricebook-hw6-bk52.surge.sh/)
+### Deployed forntend site: [Surge](http://ricebook-hw6-bk52.surge.sh/), Backend repo: [Github]()
 
-### URL to the backend repo: [Github]()
-
-### Details:
+### Features:
 
 - Frontend built with mainly **React.js** and **React hooks**.
 - 3 views (Feed, Authentication, and Profile)
 - Responsive pages for every view.
 - Styles are made with **TailwindCSS**.
 
+### Testing:
+
+- Tested with Jest
+- Line coverage 88%
+- A screenshot of Jest test result is down below
+
 ### Get Started:
 
-- Dummy users (from [jsonplaceholder](https://jsonplaceholder.typicode.com/users)):
-  - username: <code>Bret</code>, password: <code>Kulas Light</code>
-  - username: <code>Antonette</code>, password: <code>Victor Plains</code>
-- You can register as well
+Dummy users to try this website (from [jsonplaceholder](https://jsonplaceholder.typicode.com/users)):
+
+- username: <code>Bret</code>, password: <code>Kulas Light</code>
+- username: <code>Antonette</code>, password: <code>Victor Plains</code>
+  Or you can also register!
 
 ### Screenshots:
 
@@ -33,6 +38,10 @@
 #### Profile
 
 ![image-profile](/screenshots/image-profile.png)
+
+#### Jest testing
+
+![image-unit-tests](/unit-tests.png)
 
 ### Next Steps
 

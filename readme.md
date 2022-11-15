@@ -32,7 +32,7 @@ Dummy users to try this website (from [jsonplaceholder](https://jsonplaceholder.
 - Connect with the frontend
 - Incorporate AWS S3 for image storage
 - Incorporate Redis caching store
-- Ready to crowd's usage
+- Ready for crowd's usage
 
 ### Screenshots:
 

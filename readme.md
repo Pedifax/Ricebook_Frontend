@@ -1,6 +1,9 @@
 # Social Media Web App 2
 
-### Deployed forntend site: [Surge](http://ricebook-hw6-bk52.surge.sh/), Backend repo: [Github]()
+### Links
+
+- Deployed forntend site: [Surge](http://ricebook-hw6-bk52.surge.sh/)
+- Backend repo: [Github]()
 
 ### Features:
 

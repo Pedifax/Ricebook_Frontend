@@ -14,8 +14,8 @@
 ### Get Started:
 
 - Dummy users (from [jsonplaceholder](https://jsonplaceholder.typicode.com/users)):
-  - username: "Bret", password: "Kulas Light"
-  - username: "Antonette", password: "Victor Plains"
+  - username: <code>Bret</code>, password: <code>Kulas Light</code>
+  - username: <code>Antonette</code>, password: <code>Victor Plains</code>
 - You can register as well
 
 ### Screenshots:

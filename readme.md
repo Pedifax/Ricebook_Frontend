@@ -1,9 +1,10 @@
-# Social Media Web App 2
+# Social Media Web App 2 - Frontend
 
 ### Links
 
 - Deployed forntend site: [Surge](http://ricebook-hw6-bk52.surge.sh/)
-- Backend repo: [Github]()
+- Deployed Backend: [Heroku](https://comp531-hw6-backend-bk52.herokuapp.com/)
+- Backend repo: [Github](https://github.com/Pedifax/Social-Network-Application-Backend)
 
 ### Features:
 
@@ -24,7 +25,7 @@ Dummy users to try this website (from [jsonplaceholder](https://jsonplaceholder.
 
 - username: <code>Bret</code>, password: <code>Kulas Light</code>
 - username: <code>Antonette</code>, password: <code>Victor Plains</code>
-  Or you can also register!
+- Your welcomed to try the register function as well!
 
 ### Screenshots:
 
@@ -46,6 +47,6 @@ Dummy users to try this website (from [jsonplaceholder](https://jsonplaceholder.
 
 ![image-unit-tests](/unit-tests.png)
 
-### Next Steps
+### Next Steps (ETA Dec. 1st)
 
-- Connect frontend and the backend (ETA 12/1)
+- Connect frontend and the backend 

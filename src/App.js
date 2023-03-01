@@ -9,31 +9,11 @@ import Auth from "./auth/pages/Auth";
 import Feed from "./main/pages/Feed";
 import Profile from "./profile/pages/Profile";
 import NavigationBar from "./shared/components/navigations/NavigationBar";
+import { useAuth } from "./shared/hooks/auth-hook";
 import { AppContext } from "./shared/context/app-context";
 
 const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [loggedUserId, setLoggedUserId] = useState(null);
-  const login = useCallback((userId) => {
-    setIsLoggedIn(true);
-    setLoggedUserId(userId);
-    localStorage.setItem("loggedInUser", JSON.stringify({ id: userId }));
-  }, []);
-  const logout = useCallback(() => {
-    setIsLoggedIn(false);
-    setLoggedUserId(null);
-    let stored_headline = localStorage.getItem("stored_headline");
-    localStorage.clear();
-    localStorage.setItem("stored_headline", stored_headline);
-  }, []);
-
-  useEffect(() => {
-    let loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
-    if (loggedInUser) {
-      login(loggedInUser.id);
-    }
-  }, [login]);
-
+  const { isLoggedIn, loggedUsername, login, logout } = useAuth();
   let routes;
 
   if (isLoggedIn) {
@@ -43,15 +23,16 @@ const App = () => {
           <Feed />
         </Route>
 
-        <Route path="/feed" exact>
+        {/* <Route path="/feed" exact>
           <Feed />
-        </Route>
+        </Route> */}
 
         <Route path="/profile" exact>
           <Profile />
         </Route>
 
-        <Redirect to="/feed" />
+        {/* <Redirect to="/feed" /> */}
+        <Redirect to="/" />
       </Switch>
     );
   } else {
@@ -70,7 +51,7 @@ const App = () => {
     <AppContext.Provider
       value={{
         isLoggedIn: isLoggedIn,
-        userId: loggedUserId,
+        loggedUsername: loggedUsername,
         login: login,
         logout: logout,
       }}

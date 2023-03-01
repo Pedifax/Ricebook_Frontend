@@ -17,6 +17,7 @@ export const useHttpRequest = () => {
           method,
           body,
           headers,
+          credentials: "include",
           signal: httpAbortCtrl.signal,
         });
 

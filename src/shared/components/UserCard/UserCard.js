@@ -1,24 +1,24 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import Button from "../UIs/Button";
 
 const UserCard = (props) => {
-  const init_status = props.status ? props.status : "Add a new status!";
-  const [status, setStatus] = useState(init_status);
+  const [status, setStatus] = useState(props.status);
   const [text_area_content, setTextAreaContent] = useState("");
   const textAreaOnChangeHandler = (event) => {
     setTextAreaContent(event.target.value);
   };
+
   const statusUpdateHandler = () => {
     if (text_area_content.length >= 1) {
       props.onStatusChange(text_area_content);
-      setStatus(text_area_content);
       setTextAreaContent("");
     }
   };
 
-  let user_id = props.id;
-  let url_tail = (Number(user_id) % 2) + 1;
+  useEffect(() => {
+    setStatus(props.status);
+  }, [props.status]);
 
   const content = (
     <React.Fragment>
@@ -27,13 +27,13 @@ const UserCard = (props) => {
           <div className="w-1/5 flex-col items-center rounded-xl bg-white py-2 md:flex-row">
             <img
               className="ml-2 h-16 w-16 rounded-full"
-              src={require(`../../images/ImagesForDev/UserImages/user_image_${url_tail}.jpeg`)}
-              alt=""
+              src={props.avatar}
+              alt={`${props.username} image`}
             />
           </div>
           <div className="w-4/5 flex-col p-4">
             <div className="mb-2 text-2xl font-bold tracking-tight text-gray-900 ">
-              {props.name}
+              {props.username}
             </div>
             <div className="font-normal text-gray-700 ">{status}</div>
           </div>

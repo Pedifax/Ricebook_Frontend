@@ -89,6 +89,7 @@ const Input = (props) => {
         onBlur={touchHandler} // so the user won't get warning input field right from the start
         value={inputState.value} // 2-way binding
         data-testid={props.testid}
+        autoComplete={props.autoComplete}
       />
     ) : (
       <textarea

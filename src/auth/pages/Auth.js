@@ -1,48 +1,52 @@
-import React, { useState, useEffect, useContext } from "react";
-import { useHistory } from "react-router-dom";
+import React, { useState, useEffect, useContext, useRef } from "react";
+import { Redirect, useHistory } from "react-router-dom";
 
 import Input from "../../shared/components/form/Input";
 import Button from "../../shared/components/UIs/Button";
 import { useFormState } from "../../shared/hooks/form-state-hook";
 import { useHttpRequest } from "../../shared/hooks/http-request-hook";
 import { AppContext } from "../../shared/context/app-context";
-
 const error_text_style = "text-sm text-red-400 text-center mb-3";
+const BACKEND = process.env.REACT_APP_BACKEND_URL;
 
 const Auth = () => {
   const { isLoading, error, sendRequest, clearError } = useHttpRequest();
   const [password_mismatch, setPasswordMismatch] = useState(false);
   const [login_warning, setLoginWarning] = useState(false);
   const [username_warning, setUsernameWarning] = useState(false);
+  const [imageMissing, setImageMissing] = useState(false);
   const [bottom_warning, setBottomWarning] = useState();
   const [is_login_mode, setIsLoginMode] = useState(true);
-  const app_context = useContext(AppContext);
+  const appContext = useContext(AppContext);
   const history = useHistory();
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const responseData = await sendRequest(
-          `https://jsonplaceholder.typicode.com/users`
-        );
-        localStorage.setItem("users", JSON.stringify(responseData));
-      } catch (err) {}
-    };
-    fetchUser();
-  }, [sendRequest]);
+  /*             */
+  /* File Upload */
+  /*             */
+  const [imageFile, setImageFile] = useState();
+  const [previewURL, setPreviewURL] = useState();
+  const filePickerRef = useRef();
+  const browseImageHandler = () => {
+    filePickerRef.current.click();
+  };
+  const imagePickedHandler = (event) => {
+    setImageFile(event.target.files[0]);
+  };
 
   useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const responseData = await sendRequest(
-          `https://jsonplaceholder.typicode.com/posts`
-        );
-
-        localStorage.setItem("posts", JSON.stringify(responseData));
-      } catch (err) {}
+    // image preview
+    if (!imageFile) {
+      return;
+    }
+    const fileReader = new FileReader();
+    fileReader.onload = () => {
+      setPreviewURL(fileReader.result);
     };
-    fetchPosts();
-  }, [sendRequest]);
+    fileReader.readAsDataURL(imageFile);
+  }, [imageFile]);
+  /*             */
+  /* File Upload */
+  /*             */
 
   const [formState, inputHandler, setForm] = useFormState(
     {
@@ -59,43 +63,8 @@ const Auth = () => {
       phone_number: undefined,
       zip: undefined,
     },
-    false
+    true
   );
-
-  // This won't work. Don't know why
-  // const passwordOnInputHandler = useCallback((id, value, isValid) => {
-  //   console.log("here1");
-  //   inputHandler(id, value, isValid);
-  //   console.log("here2");
-  //   const cur_formState = {
-  //     ...formState,
-  //   };
-  // console.log(cur_formState);
-  // if (!is_login_mode && formState.inputs.password_confirmation) {
-  //   if (
-  //     formState.inputs.password_confirmation.value !==
-  //     formState.inputs.password.value
-  //   ) {
-  //     console.log("here3");
-  //     // console.log(
-  //     //   `formState.inputs.password_confirmation.value = ${formState.inputs.password_confirmation.value}`
-  //     // );
-  //     // console.log(
-  //     //   `formState.inputs.password.value = ${formState.inputs.password.value}`
-  //     // );
-  //     setForm(
-  //       {
-  //         ...formState.inputs,
-  //       },
-  //       false
-  //     );
-
-  //     // setPasswordMismatch(true);
-  //   } else {
-  //     // setPasswordMismatch(false);
-  //   }
-  // }
-  // }, []);
 
   const switchModeHandler = () => {
     if (!is_login_mode) {
@@ -110,13 +79,12 @@ const Auth = () => {
           zip: undefined,
         },
         // formState.inputs.username.isValid && formState.inputs.password.isValid
-        latest_formState_inputs.username.isValid &&
-          latest_formState_inputs.password.isValid
+        // latest_formState_inputs.username.isValid &&
+        //   latest_formState_inputs.password.isValid
+        true
       );
       setPasswordMismatch(false);
       setUsernameWarning(false);
-      // console.log("formState =");
-      // console.log({ ...formState });
     } else {
       setForm(
         {
@@ -130,29 +98,16 @@ const Auth = () => {
     // setBottomWarning("Wrong credential.");
     setIsLoginMode((last_mode) => !last_mode);
   };
-  //
-  //
-  //
-  //
-  //
 
-  const isNewUsernameValid = (new_username, users) => {
-    let matches = users.filter((user) => user.username === new_username);
-    if (matches.length > 0) {
-      return false;
-    }
-    return true;
-  };
-
-  const authSubmitHandler = (event) => {
+  const authSubmitHandler = async (event) => {
     event.preventDefault();
 
     const cur_formState_inputs = {
       ...formState.inputs,
     };
+
     if (!cur_formState_inputs.username.value) return;
 
-    // And I don't know why this would work, while the above passwordOnInputHandler method won't. Maybe it's because it's at a different function
     if (
       !is_login_mode &&
       cur_formState_inputs.password &&
@@ -166,107 +121,164 @@ const Auth = () => {
         },
         false
       );
-      setBottomWarning("Password Mismatch. Please confirm again.");
+      setBottomWarning("Password Mismatch.");
       setPasswordMismatch(true);
       return;
-    } else {
-      setBottomWarning("");
-      setPasswordMismatch(false);
     }
 
     // -----------------------------------------------------------------------
-    let users = JSON.parse(localStorage.getItem("users"));
-
     // Login or register:
     if (is_login_mode) {
       let cur_formState_inputs = {
         ...formState.inputs,
       };
+      const payload = {
+        username: cur_formState_inputs.username.value,
+        password: cur_formState_inputs.password.value,
+      };
 
-      // let users = JSON.parse(localStorage.getItem("users")).responseData;
-      // let users = JSON.parse(localStorage.getItem("users"));
-      let matches = users.filter(
-        (user) =>
-          user.username === cur_formState_inputs.username.value &&
-          user.address.street === cur_formState_inputs.password.value
-      );
-      // matches is an array! Be careful!
-      if (matches.length === 1) {
-        let loggedInUser = matches[0];
-        // console.log("In Login, loggedInUser = ");
-        // console.log(loggedInUser);
-
-        localStorage.setItem("cur_user", JSON.stringify(loggedInUser));
-        // console.log("The thing in local storage = ");
-        // console.log(JSON.parse(localStorage.getItem("cur_user")).loggedInUser);
-        // console.log(JSON.parse(localStorage.getItem("cur_user")));
-
-        app_context.login(loggedInUser.id);
-        // history.push("/feed");
-        // console.log("logged in.");
-      } else {
+      try {
+        const responseData = await sendRequest(
+          `${BACKEND}/login`,
+          "POST",
+          JSON.stringify(payload),
+          {
+            "Content-Type": "application/json", // MUST ADD THIS HEADER!
+          }
+        );
+        appContext.login(responseData.username);
+      } catch (err) {
+        // 解釋：
+        // If wrong credential, hook will throw an error, which is caught by
+        // this block. So if staying in try{} block, it means the login is HTTP 200,
+        // thus don't need to check responseData.
+        // console.log("err in Auth > Login: " + err);
         setLoginWarning(true);
         setBottomWarning("Wrong credential.");
-        // console.log("login FAILED. No matched user.");
       }
-      return;
     }
 
     // register mode
     if (!is_login_mode) {
+      if (!imageFile) {
+        setImageMissing(true);
+        setBottomWarning("Please select an image.");
+        return;
+      }
+
       let cur_formState_inputs = {
         ...formState.inputs,
       };
 
-      // check if user already exists:
-      let new_username = cur_formState_inputs.username.value;
-      if (!isNewUsernameValid(new_username, users)) {
-        setUsernameWarning(true);
-        setBottomWarning("The username is already taken.");
-        return;
+      try {
+        const formData = new FormData();
+        formData.append("image", imageFile);
+        formData.append("username", cur_formState_inputs.username.value);
+        formData.append("password", cur_formState_inputs.password.value);
+        formData.append("email", cur_formState_inputs.email.value);
+        formData.append("phone", cur_formState_inputs.phone_number.value);
+        formData.append("zip", cur_formState_inputs.zip.value);
+
+        const responseData = await sendRequest(
+          `${BACKEND}/register`,
+          "POST",
+          formData
+          // DON'T add "Content-Type": "application/json" when uploading an image
+        );
+        appContext.login(responseData.username);
+      } catch (err) {
+        // console.log("err in Auth > register: " + err);
+        setBottomWarning("Something went wrong, can't register.");
       }
-
-      const loggedInUser = {
-        id: 11,
-        username: cur_formState_inputs.username.value,
-        address: {
-          street: cur_formState_inputs.password.value,
-          zipcode: cur_formState_inputs.zip.value,
-        },
-        email: cur_formState_inputs.email.value,
-        phone: cur_formState_inputs.phone_number.value,
-        company: {
-          catchPhrase: "No status yet. Create one?",
-        },
-      };
-      // console.log("In registration, loggedInUser = ");
-      // console.log("loggedInUser:");
-      // console.log(loggedInUser);
-
-      app_context.login(11);
-      // localStorage.setItem("cur_user", JSON.stringify({ loggedInUser }));
-      localStorage.setItem("cur_user", JSON.stringify(loggedInUser));
-      // let cur_user = JSON.parse(localStorage.getItem("cur_user")).loggedInUser;
-      // let cur_user = JSON.parse(localStorage.getItem("cur_user"));
-
-      // console.log("registered and logged in with a new account.");
-      // console.log("the account is:");
-      // console.log(cur_user);
     }
+  };
+
+  const googleAuth = () => {
+    window.open(`${process.env.REACT_APP_BACKEND_URL}/oauth/google`, "_self");
   };
 
   return (
     <React.Fragment>
       <h1
-        className="mt-3 text-center text-lg text-black"
+        className="mt-3 pb-2 text-center text-2xl font-light text-black"
         data-testid="auth_title"
       >
         {is_login_mode ? "Login" : "Register"}
       </h1>
       <hr className="ml-10 mr-10 mb-5" data-testid="hr" />
-      {/* <form className="ml-10 mr-10 " onSubmit={authSubmitHandler}> */}
       <div className="ml-10 mr-10 ">
         <div className="">
+          <input
+            type="file"
+            ref={filePickerRef}
+            style={{ display: "none" }}
+            className="hidden"
+            accept=".jpg,.png,.jpeg,.gif"
+            onChange={imagePickedHandler}
+          />
+          {!is_login_mode ? (
+            <div className="flex flex-col justify-center">
+              <div className="flex flex-col self-center">
+                <div className="self-center">
+                  {previewURL ? (
+                    <div>
+                      <img
+                        className="h-24 w-24 rounded-full"
+                        src={previewURL}
+                        alt="previewImage"
+                      />
+                    </div>
+                  ) : (
+                    <div>
+                      <svg
+                        className="h-24 w-24"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                        role="default avatar"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    </div>
+                  )}
+                </div>
+                {previewURL ? (
+                  ""
+                ) : (
+                  <span className="self-center">Pick an image of you!</span>
+                )}
+              </div>
+              <div
+                className="mt-2 cursor-pointer self-center rounded-lg p-2 hover:bg-gray-200"
+                onClick={browseImageHandler}
+              >
+                <svg
+                  className="h-6 w-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                  role="browse image button"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                  />
+                </svg>
+              </div>
+            </div>
+          ) : (
+            ""
+          )}
+
           {/* USERNAME */}
           <Input
             type="text"
@@ -288,6 +300,7 @@ const Auth = () => {
             onInput={inputHandler}
             // onInput={passwordOnInputHandler}
             testid="input_password"
+            autoComplete="off"
           />
 
           {/* IF IN REGISTER MODE: */}
@@ -300,7 +313,6 @@ const Auth = () => {
               label="Confirm Password"
               error_message="Please confirm the password and make sure they match."
               onInput={inputHandler}
-              // onInput={passwordOnInputHandler}
               testid="input_password_confirmation"
             />
           )}
@@ -351,24 +363,40 @@ const Auth = () => {
         <div className="ml-auto mr-auto flex flex-col space-y-2 md:max-w-xs">
           <p
             className={`${
-              password_mismatch || login_warning || username_warning
-                ? "block"
-                : "invisible"
+              // password_mismatch ||
+              // login_warning ||
+              // username_warning ||
+              // imageMissing
+              bottom_warning ? "block" : "invisible"
             } ${error_text_style}`}
-            data-testid='bottom_warning_EL'
+            data-testid="bottom_warning_EL"
           >
             {bottom_warning}
           </p>
+
           <Button
             type="submit"
-            disabled={!formState.isValid}
+            disabled={!formState.isValid} // BUG behavior weird!
+            // (reproduce: valid inputs, switch to register and back to login, then we can't click)
             onClick={authSubmitHandler}
             testid="submit_button"
           >
             {is_login_mode ? "Login" : "Register"}
           </Button>
+
           <Button onClick={switchModeHandler} testid="switch_mode_button">
             Switch to {`${is_login_mode ? "Registration" : "Login"}`}
+          </Button>
+
+          <Button className="" onClick={googleAuth}>
+            <div className="flex justify-center">
+              <div className="">
+                <img
+                  src={require("../../shared/images/google.png")}
+                  className="h-8 w-8"
+                />
+              </div>
+            </div>
           </Button>
         </div>
       </div>

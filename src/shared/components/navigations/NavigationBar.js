@@ -6,7 +6,7 @@ import BlackBackground from "../UIs/BlackBackground";
 import { AppContext } from "../../context/app-context";
 
 const NavigationBar = () => {
-  const app_context = useContext(AppContext);
+  const appContext = useContext(AppContext);
   const [drawer_is_open, setDrawerIsOpen] = useState(false);
 
   const openDrawerHandler = () => {
@@ -18,13 +18,13 @@ const NavigationBar = () => {
   };
 
   return (
-    <React.Fragment>
+    <div className="border py-6 shadow-md">
       {drawer_is_open && <BlackBackground onClick={closeDrawerHandler} />}
       {drawer_is_open && (
         <SideDrawer drawer_is_open onClick={closeDrawerHandler} />
       )}
 
-      <div className="mx-auto flex flex-wrap items-center justify-between border-gray-200 bg-white px-4 py-2.5 dark:bg-gray-800 lg:px-6">
+      <div className="fixed top-0 mx-auto flex w-full flex-wrap items-center justify-between border-gray-200 bg-white px-4 py-2.5 dark:bg-gray-800 lg:px-6">
         <NavLink to="/" className="flex items-center" exact>
           <img
             src={require("../../images/logo.png")}
@@ -47,11 +47,11 @@ const NavigationBar = () => {
               Profile
             </span>
           </NavLink>
-          {app_context.isLoggedIn && (
+          {appContext.isLoggedIn && (
             <button
               className="mr-2 hidden rounded-lg px-4 py-2 text-sm font-medium text-gray-800 hover:bg-red-500 hover:text-white focus:outline-none md:block md:px-5 md:py-2.5"
-              onClick={app_context.logout}
-              data-testid='logout_button'
+              onClick={appContext.logout}
+              data-testid="logout_button"
             >
               Logout
             </button>
@@ -93,7 +93,7 @@ const NavigationBar = () => {
           </button>
         </div>
       </div>
-    </React.Fragment>
+    </div>
   );
 };
 

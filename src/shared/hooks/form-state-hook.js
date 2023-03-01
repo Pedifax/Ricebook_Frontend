@@ -39,9 +39,6 @@ const formStateReducer = (state, action) => {
 
 export const useFormState = (initial_inputs, initial_whole_validity) => {
   const [formState, dispatch] = useReducer(formStateReducer, {
-    // the initial state: inputs = the summary of all the states (title's, description's)
-    // isValid: the overall validity of the all the inputs
-
     inputs: initial_inputs,
     isValid: initial_whole_validity,
   });
@@ -61,16 +58,6 @@ export const useFormState = (initial_inputs, initial_whole_validity) => {
       isValid: isValid,
       inputId: id,
     });
-
-    // This won't work. The values aren't updated at this stage.
-    // if (id === "password" || id === "password_confirmation") {
-    //   console.log("here");
-    //   console.log(id);
-    //   console.log(formState.inputs.password);
-    //   console.log(formState.inputs.password_confirmation);
-    //   if (formState.inputs.password_confirmation) {
-    //   }
-    // }
   }, []);
 
   return [formState, inputHandler, setForm];

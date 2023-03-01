@@ -1,30 +1,25 @@
-import React, { useState, useEffect } from "react";
-// import { useHistory } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
 
 import { validate } from "../../shared/tools/validators";
-// import Input from "../../shared/components/form/Input";
 import Button from "../../shared/components/UIs/Button";
-// import { useFormState } from "../../shared/hooks/form-state-hook";
-// import { AppContext } from "../../shared/context/app-context";
-// import UserCard from "../../shared/components/UserCard/UserCard";
-import UserCardForUpdate from "../../shared/components/UserCard/UserCardForUpdate";
+import { useHttpRequest } from "../../shared/hooks/http-request-hook";
 
-// const passwordStar = (target) => {
-//   return "*".repeat(target.length);
-// };
+const BACKEND = process.env.REACT_APP_BACKEND_URL;
 
+const diabled_input_style =
+  " border bg-white text-cyan-500 font-md border-gray-300 text-sm rounded-md focus:ring-cyan-400 focus:border-cyan-400 block w-full p-2";
 const input_style =
-  "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-cyan-400 focus:border-cyan-400 block w-full p-2";
+  " border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-cyan-400 focus:border-cyan-400 block w-full p-2";
 const label_style =
   "block mb-1 ml-2 text-md font-medium text-gray-900 dark:text-gray-300";
-const error_text_style = "ml-6 mt-2 text-xs md:text-sm text-red-400";
+const error_text_style = "text-xs font-light md:text-sm text-red-500";
 const update_error_text_style = "m-auto text-xs md:text-lg text-red-400";
 const success_text_style = "m-auto text-xs md:text-lg text-green-400";
 
 const Profile = () => {
-  // THE LOGGED IN USER: cur_user
-  const [cur_user, setCurUser] = useState({});
-  const [all_error_msg, setAllErrorMsg] = useState({
+  const [userProfile, setUserProfile] = useState({});
+  const { isLoading, error, sendRequest, clearError } = useHttpRequest();
+  const [form, setForm] = useState({
     username: "",
     password: "",
     password_confirmation: "",
@@ -32,22 +27,77 @@ const Profile = () => {
     phone_number: "",
     zip: "",
   });
+  const [all_error_msg, setAllErrorMsg] = useState({});
   const [bottom_info, setBottomInfo] = useState({
     is_valid: true,
     message_to_show: "",
   });
+  /*             */
+  /* File Upload */
+  /*             */
+  const filePickerRef = useRef();
+  const [imageFile, setImageFile] = useState();
+  const [previewURL, setPreviewURL] = useState();
+  const browseImageHandler = () => {
+    filePickerRef.current.click();
+  };
+  const imagePickedHandler = (event) => {
+    setImageFile(event.target.files[0]);
+  };
 
   useEffect(() => {
-    // setCurUser(JSON.parse(localStorage.getItem("cur_user")).loggedInUser);
-    setCurUser(JSON.parse(localStorage.getItem("cur_user")));
+    // image preview
+    if (!imageFile) {
+      return;
+    }
+    const fileReader = new FileReader();
+    fileReader.onload = () => {
+      setPreviewURL(fileReader.result);
+    };
+    fileReader.readAsDataURL(imageFile);
+  }, [imageFile]);
+  /*             */
+  /* File Upload */
+  /*             */
+
+  const clearForm = () => {
+    setForm({
+      username: "",
+      password: "",
+      password_confirmation: "",
+      email: "",
+      phone_number: "",
+      zip: "",
+    });
+    setPreviewURL(null);
+    setImageFile(null);
+    obtainProfile();
+  };
+
+  const obtainProfile = async () => {
+    try {
+      const responseData = await sendRequest(`${BACKEND}/profile`);
+      setUserProfile(responseData.profileObject);
+      setForm((prev) => ({
+        ...prev,
+        email: responseData.profileObject.email, // to avoid auto-complete
+        password: "",
+      }));
+    } catch (err) {
+      // console.log(`Feed > Error when obtaining userProfileObj: ${err}`);
+    }
+  };
+
+  useEffect(() => {
+    obtainProfile();
   }, []);
 
-  useEffect(() => {}, [cur_user]);
+  useEffect(() => {}, [userProfile]);
 
   const handleUsername = (e) => {
     e.preventDefault();
     let new_value = e.target.value;
-    setCurUser((prevState) => ({ ...prevState, username: new_value }));
+    setForm((prevState) => ({ ...prevState, username: new_value }));
     if (validate(new_value, "username")) {
       setAllErrorMsg((prevState) => ({ ...prevState, username: "" }));
     } else {
@@ -60,11 +110,10 @@ const Profile = () => {
 
   const handlePassword = (event) => {
     let new_value = event.target.value;
-    setCurUser((prevState) => ({
+    setForm((prevState) => ({
       ...prevState,
-      address: { ...prevState.address, street: new_value },
+      password: new_value,
     }));
-
     if (validate(new_value, "password")) {
       setAllErrorMsg((prevState) => ({ ...prevState, password: "" }));
     } else {
@@ -77,11 +126,10 @@ const Profile = () => {
 
   const handlePasswordConfirmation = (e) => {
     let new_value = e.target.value;
-    setCurUser((prevState) => ({
+    setForm((prevState) => ({
       ...prevState,
       password_confirmation: new_value,
     }));
-
     if (validate(new_value, "password_confirmation")) {
       setAllErrorMsg((prevState) => ({
         ...prevState,
@@ -96,8 +144,9 @@ const Profile = () => {
   };
 
   const handleEmail = (e) => {
+    e.preventDefault();
     let new_value = e.target.value;
-    setCurUser((prevState) => ({ ...prevState, email: new_value }));
+    setForm((prevState) => ({ ...prevState, email: new_value }));
     if (validate(new_value, "email")) {
       setAllErrorMsg((prevState) => ({ ...prevState, email: "" }));
     } else {
@@ -110,8 +159,7 @@ const Profile = () => {
 
   const handlePhone = (e) => {
     let new_value = e.target.value;
-    setCurUser((prevState) => ({ ...prevState, phone: new_value }));
-
+    setForm((prevState) => ({ ...prevState, phone_number: new_value }));
     if (validate(new_value, "phone_number")) {
       setAllErrorMsg((prevState) => ({ ...prevState, phone_number: "" }));
     } else {
@@ -124,11 +172,10 @@ const Profile = () => {
 
   const handleZip = (e) => {
     let new_value = e.target.value;
-    setCurUser((prevState) => ({
+    setForm((prevState) => ({
       ...prevState,
-      address: { ...prevState.address, zipcode: new_value },
+      zip: new_value,
     }));
-
     if (validate(new_value, "zip")) {
       setAllErrorMsg((prevState) => ({ ...prevState, zip: "" }));
     } else {
@@ -139,30 +186,15 @@ const Profile = () => {
     }
   };
 
-  /*
-  const [all_error_msg, setAllErrorMsg] = useState({
-    username: "",
-    password: "",
-    password_confirmation: "",
-    email: "",
-    phone_number: "",
-    zip: "",
-  }); 
-  */
-
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
 
-    // INIT:
-
     let cur_form = {
-      ...cur_user,
+      ...form,
     };
-
     let error_compilation = {
       ...all_error_msg,
     };
-
     let list_to_check = [
       error_compilation.username,
       error_compilation.password,
@@ -173,177 +205,325 @@ const Profile = () => {
     ];
     let is_valid = true;
     let output_message = "";
-    let pass1 = cur_form.address.street;
+    let pass1 = cur_form.password;
     let pass2 = cur_form.password_confirmation;
-
     // VALIDATE:
     for (let i = 0; i < list_to_check.length; i++) {
       is_valid = is_valid && !list_to_check[i];
       if (list_to_check[i]) {
+        // TODO omit output message, use all_error_msg instead
         output_message += list_to_check[i] + " ";
       }
     }
 
-    if (pass1 !== pass2) {
-      is_valid = false;
-      output_message += "Passwords mismatch.";
+    if (pass1 !== "" && pass2 !== "") {
+      if (pass1 !== pass2) {
+        is_valid = false;
+        output_message += "Passwords mismatch.";
+      }
     }
 
-    // OUTPUT
     if (is_valid) {
-      // console.log("success");
-      output_message = "Profile updated successfully.";
-    } else {
-      // console.log("fail");
-    }
+      const payload = {
+        email: cur_form.email,
+        phone: cur_form.phone_number,
+        zip: cur_form.zip,
+      };
 
-    setBottomInfo({
-      is_valid,
-      message_to_show: output_message,
-    });
+      try {
+        const responseData = await sendRequest(
+          `${BACKEND}/profile`,
+          "PUT",
+          JSON.stringify(payload),
+          {
+            "Content-Type": "application/json", // MUST ADD THIS HEADER!
+          }
+        );
+        setUserProfile(responseData.userProfile);
+      } catch (err) {
+        // console.log(`Profile > updateProfile: ${err.message}`);
+        setBottomInfo({
+          is_valid: false,
+          message_to_show: "Failed to update profile.",
+        });
+        return;
+      }
+
+      // if password, call updatePassword
+      if (pass1.length > 0 && pass2.length > 0) {
+        const payload = {
+          password: pass1,
+        };
+
+        try {
+          const responseData = await sendRequest(
+            `${BACKEND}/password`,
+            "PUT",
+            JSON.stringify(payload),
+            {
+              "Content-Type": "application/json", // MUST ADD THIS HEADER!
+            }
+          );
+        } catch (err) {
+          // console.log(`Profile > updatePassword: ${err.message}`);
+          setBottomInfo({
+            is_valid: false,
+            message_to_show: "Profile updated password.",
+          });
+          return;
+        }
+      }
+
+      // update avatar
+      if (imageFile) {
+        try {
+          const formData = new FormData();
+          formData.append("image", imageFile);
+
+          await sendRequest(
+            `${BACKEND}/avatar`,
+            "PUT",
+            formData
+            // DON'T add "Content-Type": "application/json" when uploading an image
+          );
+        } catch (err) {
+          // console.log(`Profile > update avatar: ${err.message}`);
+          setBottomInfo({
+            is_valid: false,
+            message_to_show: "Failed to update image.",
+          });
+          return;
+        }
+      }
+
+      clearForm();
+
+      setBottomInfo({
+        is_valid,
+        message_to_show: "Profile updated successfully.",
+      });
+    } else {
+      setBottomInfo({
+        is_valid,
+        message_to_show: output_message,
+      });
+    }
   };
 
   return (
-    <React.Fragment>
-      <h1 className="mt-3 text-center text-lg text-black">Profile</h1>
-      <hr className="ml-10 mr-10 mb-5" />
-      <div className="flex place-content-center">
-        <UserCardForUpdate
-          name={cur_user.username === undefined ? "" : cur_user.username}
-          id={cur_user.id === undefined ? "" : cur_user.id}
-          birthday="1970/10/27"
-        />
+    <div className="flex flex-row justify-center py-5">
+      <div className="w-5/6 rounded-xl border bg-white py-3 shadow-lg outline-none">
+        <h1 className="pb-2 text-center text-2xl font-light text-black">
+          Edit Profile
+        </h1>
+        <hr className="ml-10 mr-10 px-2 py-3" />
+        <div className="mb-7 flex w-full flex-row justify-center">
+          <div className="relative h-full w-1/6">
+            <input
+              type="file"
+              ref={filePickerRef}
+              style={{ display: "none" }}
+              className="hidden"
+              accept=".jpg,.png,.jpeg,.gif"
+              onChange={imagePickedHandler}
+            />
+            {previewURL ? (
+              <div>
+                <img
+                  className="h-full w-full rounded-full"
+                  src={previewURL}
+                  alt="previewImage"
+                />
+              </div>
+            ) : (
+              ""
+            )}
+            {!previewURL ? (
+              <img
+                className="h-full w-full rounded-full"
+                src={userProfile.avatar}
+                alt="user avatar"
+              />
+            ) : (
+              ""
+            )}
+
+            <div
+              className="absolute -right-3 bottom-0.5 h-5 w-5 cursor-pointer"
+              onClick={browseImageHandler}
+            >
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                ></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <form className="ml-10 mr-10 mb-28 flex flex-col">
+          <div className="flex flex-row justify-center space-x-5">
+            <div className="mb-6 w-5/12">
+              <label htmlFor="username" className={label_style}>
+                Username
+                <span className={error_text_style}>
+                  {all_error_msg.username}
+                </span>
+              </label>
+              <input
+                disabled={true}
+                type="username"
+                id="username"
+                className={diabled_input_style}
+                value={userProfile.username}
+                onChange={handleUsername}
+                data-testid="input_username"
+                autoComplete="off"
+                aria-autocomplete="none"
+              />
+            </div>
+
+            <div className="mb-6 w-5/12">
+              <label htmlFor="email" className={label_style}>
+                Email
+              </label>
+              <input
+                type="email"
+                id="email"
+                className={input_style}
+                placeholder={userProfile.email}
+                value={form.email}
+                onChange={handleEmail}
+                data-testid="input_email"
+                autoComplete="off"
+                aria-autocomplete="none"
+              />
+              <div className="block">
+                <span className="invisible">
+                  {all_error_msg.email ? "" : "placeholder"}
+                </span>
+                <span className={error_text_style}>{all_error_msg.email}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-row justify-center space-x-5">
+            <div className="mb-6 w-5/12">
+              <label htmlFor="phone_number" className={label_style}>
+                Phone Number
+              </label>
+              <input
+                type="text"
+                id="phone_number"
+                className={input_style}
+                placeholder={userProfile.phone}
+                value={form.phone_number}
+                onChange={handlePhone}
+                data-testid="input_phone_number"
+                autoComplete="off"
+                aria-autocomplete="none"
+              />
+              <div className="block">
+                <span className="invisible">
+                  {all_error_msg.phone_number ? "" : "placeholder"}
+                </span>
+                <span className={error_text_style}>
+                  {all_error_msg.phone_number}
+                </span>
+              </div>
+            </div>
+
+            <div className="mb-6 w-5/12">
+              <label htmlFor="zip" className={label_style}>
+                Zip
+              </label>
+              <input
+                type="text"
+                id="zip"
+                className={input_style}
+                placeholder={userProfile.zip}
+                value={form.zip}
+                onChange={handleZip}
+                data-testid="input_zip"
+                autoComplete="off"
+                aria-autocomplete="none"
+              />
+              <div className="block">
+                <span className="invisible">
+                  {all_error_msg.zip ? "" : "placeholder"}
+                </span>
+                <span className={error_text_style}>{all_error_msg.zip}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-row justify-center space-x-5">
+            <div className="mb-6 w-5/12">
+              <label htmlFor="password" className={label_style}>
+                Password
+                <span className={error_text_style}>
+                  {all_error_msg.password}
+                </span>
+              </label>
+              <input
+                type="password"
+                id="password"
+                className={input_style}
+                value={form.password}
+                onChange={handlePassword}
+                data-testid="input_password"
+                autoComplete="off"
+                aria-autocomplete="none"
+              />
+            </div>
+
+            <div className="mb-6 w-5/12">
+              <label htmlFor="password_confirmation" className={label_style}>
+                Password Confirmation
+                <span className={error_text_style}>
+                  {all_error_msg.password_confirmation}
+                </span>
+              </label>
+              <input
+                type="password"
+                id="password_confirmation"
+                className={input_style}
+                value={form.password_confirmation}
+                onChange={handlePasswordConfirmation}
+                data-testid="input_password_confirmation"
+                autoComplete="off"
+                aria-autocomplete="none"
+              />
+            </div>
+          </div>
+
+          <div className="ml-auto mr-auto flex flex-col md:max-w-xs">
+            <p
+              className={`block ${
+                bottom_info.is_valid
+                  ? success_text_style
+                  : update_error_text_style
+              }`}
+              data-testid="bottom_info"
+            >
+              {bottom_info.message_to_show}
+            </p>
+            <Button onClick={submitHandler} testid="update_button">
+              Update
+            </Button>
+          </div>
+        </form>
       </div>
-      <form className="ml-10 mr-10 mt-2">
-        <div className="mb-6">
-          <label htmlFor="username" className={label_style}>
-            Username
-            <span className={error_text_style}>{all_error_msg.username}</span>
-          </label>
-          <input
-            disabled={true}
-            type="username"
-            id="username"
-            className={input_style}
-            value={cur_user.username === undefined ? "" : cur_user.username}
-            onChange={handleUsername}
-            data-testid="input_username"
-          />
-        </div>
-
-        <div className="mb-6">
-          <label htmlFor="password" className={label_style}>
-            Password
-            <span className={error_text_style}>{all_error_msg.password}</span>
-          </label>
-          <input
-            type="password"
-            id="password"
-            className={input_style}
-            value={
-              cur_user.address === undefined ? "" : cur_user.address.street
-            }
-            onChange={handlePassword}
-            data-testid="input_password"
-          />
-        </div>
-
-        <div className="mb-6">
-          <label htmlFor="password_confirmation" className={label_style}>
-            Password Confirmation
-            <span className={error_text_style}>
-              {all_error_msg.password_confirmation}
-            </span>
-          </label>
-          <input
-            type="password"
-            id="password_confirmation"
-            className={input_style}
-            value={
-              cur_user.password_confirmation === undefined
-                ? ""
-                : cur_user.password_confirmation
-            }
-            onChange={handlePasswordConfirmation}
-            data-testid="input_password_confirmation"
-          />
-        </div>
-
-        <div className="mb-6">
-          <label htmlFor="email" className={label_style}>
-            Email
-            <span className={error_text_style}>{all_error_msg.email}</span>
-          </label>
-          <input
-            type="email"
-            id="email"
-            className={input_style}
-            value={cur_user.email === undefined ? "" : cur_user.email}
-            onChange={handleEmail}
-            data-testid="input_email"
-          />
-        </div>
-
-        <div className="mb-6 grid gap-6 md:grid-cols-2">
-          <div className="mb-6">
-            <label htmlFor="phone_number" className={label_style}>
-              Phone Number
-              <span className={error_text_style}>
-                {all_error_msg.phone_number}
-              </span>
-            </label>
-            <input
-              type="text"
-              id="phone_number"
-              className={input_style}
-              value={cur_user.phone === undefined ? "" : cur_user.phone}
-              onChange={handlePhone}
-              data-testid="input_phone_number"
-            />
-          </div>
-
-          <div className="mb-6">
-            <label htmlFor="zip" className={label_style}>
-              Zip
-              <span className={error_text_style}>{all_error_msg.zip}</span>
-            </label>
-            <input
-              type="text"
-              id="zip"
-              className={input_style}
-              value={
-                cur_user.address === undefined ? "" : cur_user.address.zipcode
-              }
-              onChange={handleZip}
-              data-testid="input_zip"
-            />
-          </div>
-        </div>
-
-        <div className="ml-auto mr-auto flex flex-col md:max-w-xs">
-          <p
-            className={`block ${
-              bottom_info.is_valid
-                ? success_text_style
-                : update_error_text_style
-            }`}
-            data-testid="bottom_info"
-          >
-            {bottom_info.message_to_show}
-          </p>
-          <Button onClick={submitHandler} testid="update_button">
-            Update
-          </Button>
-        </div>
-      </form>
-      <br></br>
-      <br></br>
-      <br></br>
-      <br></br>
-      <br></br>
-      <br></br>
-      <br></br>
-    </React.Fragment>
+    </div>
   );
 };
 

@@ -4,7 +4,7 @@ import { NavLink } from "react-router-dom";
 import { AppContext } from "../../context/app-context";
 
 const SideDrawer = (props) => {
-  const app_context = useContext(AppContext);
+  const appContext = useContext(AppContext);
 
   const drawer_content = (
     <div onClick={props.onClick}>
@@ -67,11 +67,11 @@ const SideDrawer = (props) => {
               </NavLink>
             </li>
             <li>
-              {app_context.isLoggedIn && (
+              {appContext.isLoggedIn && (
                 <button
                   className="mr-2 w-32 rounded-lg bg-red-400 px-4 py-2  text-sm  font-medium text-gray-800 focus:outline-none"
                   onClick={() => {
-                    app_context.logout();
+                    appContext.logout();
                   }}
                 >
                   Logout

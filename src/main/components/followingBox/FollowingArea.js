@@ -1,88 +1,90 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 
 import FollowingCard from "../../../shared/components/UserCard/FollowingCard";
 import AddFollowingBar from "./AddFollowingBar";
-
-// const randomID = () => {
-//   return Math.floor(Math.random() * 10000 + 20);
-// };
+import { AppContext } from "../../../shared/context/app-context";
+import { useHttpRequest } from "../../../shared/hooks/http-request-hook";
+import { create } from "react-test-renderer";
+const BACKEND = process.env.REACT_APP_BACKEND_URL;
 
 const FollowingArea = (props) => {
+  const appContext = useContext(AppContext);
+  const { isLoading, error, sendRequest, clearError } = useHttpRequest();
+  const username = appContext.loggedUsername;
   const [warning, setWarning] = useState({ show: false, message: "" });
+  const [followingUsers, setFollowingUsers] = useState([]);
+
+  useEffect(() => {
+    const getFollowing = async () => {
+      try {
+        const responseData = await sendRequest(`${BACKEND}/following`, "GET");
+        setFollowingUsers(responseData.following);
+      } catch (err) {
+        // console.log(
+        //   `FollowingArea > Error when obtaining following users: ${err}`
+        // );
+      }
+    };
+    getFollowing();
+  }, []);
+
   const createWarning = (signal) => {
     if (signal === "exist") {
       setWarning({ show: true, message: "User doesn't exist." });
     } else if (signal === "followed") {
       setWarning({ show: true, message: "User already followed." });
+    } else if (signal === "self") {
+      setWarning({ show: true, message: "Cannot follow yourself." });
+    } else if (signal === "blank") {
+      setWarning({ show: true, message: "User can't be blank." });
     }
   };
   const deleteWarning = () => {
     setWarning({ show: false, message: "" });
   };
 
-  // const cur_user = JSON.parse(localStorage.getItem("cur_user")).loggedInUser; // user obj
-  const cur_user = JSON.parse(localStorage.getItem("cur_user")); // user obj
-  // console.log(cur_user);
-
-  // const users = JSON.parse(localStorage.getItem("users")).responseData; // array
-  const users = JSON.parse(localStorage.getItem("users")); // array
-
-  let build_following_list = [];
-  if (cur_user.id !== 11) {
-    build_following_list = [];
-    build_following_list.push(users[(cur_user.id + 0) % 10]);
-    build_following_list.push(users[(cur_user.id + 1) % 10]);
-    build_following_list.push(users[(cur_user.id + 2) % 10]);
-  }
-  const [following_users, setFollowingUsers] = useState(build_following_list);
-
-  const unfollowHandler = (id_to_delete) => {
-    setFollowingUsers((prev_following_users) =>
-      prev_following_users.filter((friend) => friend.id !== id_to_delete)
-    );
-    let cur_user = JSON.parse(localStorage.getItem("cur_user"));
-    let new_following_list = cur_user.following_users.filter(
-      (user_id) => user_id !== id_to_delete
-    );
-    localStorage.setItem(
-      "cur_user",
-      JSON.stringify({ ...cur_user, following_users: new_following_list })
-    );
-    props.unFollowHandler();
+  const unfollowHandler = async (username_to_delete) => {
+    try {
+      const responseData = await sendRequest(
+        `${BACKEND}/following/${username_to_delete}`,
+        "DELETE"
+      );
+      setFollowingUsers(responseData.following);
+      props.onFollow();
+    } catch (err) {
+      // console.log(
+      //   `FollowingCard > unFollowHandler(): Error when unfollowing ${username}: ${err}`
+      // );
+    }
   };
 
-  const addFollowHandler = (username_to_follow) => {
-    let matches = users.filter((user) => user.username === username_to_follow);
-    // console.log("matches = ", matches);
-
-    if (matches.length === 1) {
-      let new_following_users = [...following_users];
-      let cur_user = JSON.parse(localStorage.getItem("cur_user"));
-      let cur_user_following_users = cur_user.following_users;
-
-      // handle following user that is already followed
-      if (cur_user_following_users.includes(matches[0].id)) {
-        createWarning("followed");
-        return false;
-      }
-
-      new_following_users.unshift(matches[0]);
-      setFollowingUsers(new_following_users);
-
-      cur_user_following_users.unshift(matches[0].id);
-      localStorage.setItem(
-        "cur_user",
-        JSON.stringify({
-          ...cur_user,
-          following_users: cur_user_following_users,
-        })
+  const addFollowHandler = async (username_to_follow) => {
+    if (username_to_follow.length === 0) {
+      createWarning("blank");
+      return false;
+    } else if (username_to_follow === username) {
+      createWarning("self");
+      return false;
+    }
+    try {
+      const responseData = await sendRequest(
+        `${BACKEND}/following/${username_to_follow}`,
+        "PUT"
       );
-      props.followHandler();
+      setFollowingUsers(responseData.following);
       deleteWarning();
+      props.onFollow();
       return true;
-    } else {
-      // handle no match
-      createWarning("exist");
+    } catch (err) {
+      if (err.message.includes("Could not find the user to follow")) {
+        createWarning("exist");
+      } else if (err.message.includes("Target user already followed")) {
+        createWarning("followed");
+      } else {
+        // console.log(
+        //   `FollowingArea > addFollowHandler: Error when following users: ${err}`
+        // );
+      }
       return false;
     }
   };
@@ -99,12 +101,10 @@ const FollowingArea = (props) => {
             {warning.message}
           </div>
         )}
-        {following_users.map((friend, index) => (
+        {followingUsers.map((username) => (
           <FollowingCard
-            key={index}
-            id={friend.id}
-            name={friend.username}
-            status={friend.company.catchPhrase}
+            key={username} // vital!
+            username={username}
             onUnFollow={unfollowHandler}
           />
         ))}

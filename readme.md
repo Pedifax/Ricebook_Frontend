@@ -1,3 +1,4 @@
+![image-logo](/screenshots/image-logo.png)
 # Ricebook: Social Media Web App
 
 ### This is the front-end repo of Ricebook

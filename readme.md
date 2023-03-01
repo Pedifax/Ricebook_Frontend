@@ -1,17 +1,26 @@
-# Social Media Web App 2 - Frontend
+# Ricebook: Social Media Web App
+
+### This is the front-end repo of Ricebook
 
 ### Links
 
-- Deployed forntend site: [Surge](http://ricebook-hw6-bk52.surge.sh/)
-- Deployed backend: [Heroku](https://comp531-hw6-backend-bk52.herokuapp.com/)
+- Deployed forntend site: [Surge](https://ricebook-bk.surge.sh/)
+- Deployed backend: [Heroku](https://final-app.herokuapp.com/)
 - Backend repo: [Github](https://github.com/Pedifax/Social-Network-Application-Backend)
 
 ### Features:
 
-- Frontend built with mainly **React.js** and **React hooks**.
-- 3 views (Feed, Authentication, and Profile)
-- Responsive pages for every view.
-- Styles are made with **TailwindCSS**.
+- Frontend built with mainly **React.js** and **React hooks**
+- 3 views (Feed, Authentication, and Profile) in this single-page app
+- Responsive pages for both computer and mobile views.
+- Styles are made with **TailwindCSS**
+- Front-end functionalities:
+  - Register an account
+  - Login
+  - Article CRUD
+  - Profile update
+  - Friend following
+  - Article searching
 
 ### Testing:
 
@@ -20,36 +29,49 @@
 - A screenshot of Jest test result is down below
 
 ### Get Started:
-
-Dummy users to try this website (from [jsonplaceholder](https://jsonplaceholder.typicode.com/users)):
-
-- username: <code>Bret</code>, password: <code>Kulas Light</code>
-- username: <code>Antonette</code>, password: <code>Victor Plains</code>
-- Your welcomed to try the register function as well!
-
-### Next Steps (ETA Dec. 1st)
-
-- Connect with the frontend
-- Incorporate AWS S3 for image storage
-- Incorporate Redis caching store
-- Ready for crowd's usage
+You can:
+- Register to create a new account
+- Log in with Google OAuth
+- Use the following test accounts:
+  - username: leo
+  - password: 123
+  - username: spy
+  - password: 123
 
 ### Screenshots:
 
 #### Feed
+- Overview
+![image-feed-1](/screenshots/image-feed-1.png)
 
-![image-feed-top](/screenshots/image-feed-top.png)
-![image-feed-bottom](/screenshots/image-feed-bottom.png)
+- Creating a post
+![image-feed-1-1](/screenshots/image-feed-1-1.png)
+
+- Editting a post
+![image-feed-2](/screenshots/image-feed-2.png)
+
+- Editing a comment 
+![image-feed-3](/screenshots/image-feed-3.png)
+  
 
 #### Authentication
-
+- Login
+  
 ![image-login](/screenshots/image-login.png)
+- Register
+
 ![image-register](/screenshots/image-register.png)
 
 #### Profile
 
-![image-profile](/screenshots/image-profile.png)
+- Verification for updates - invalid input
+  ![image-profile-failed](/screenshots/image-profile-failed.png)
+
+- Verification for updates - valid input
+  ![image-profile-succeeded](/screenshots/image-profile-succeeded.png)
 
 #### Jest testing
 
-![image-unit-tests](/unit-tests.png)
+- Line coverage 88%
+
+  ![image-unit-tests](/unit-tests.png)

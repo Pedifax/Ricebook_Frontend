@@ -1,4 +1,5 @@
 ![image-logo](/screenshots/image-logo.png)
+
 # Ricebook: Social Media Web App
 
 ### This is the front-end repo of Ricebook
@@ -7,7 +8,7 @@
 
 - Deployed forntend site: [Surge](https://ricebook-bk.surge.sh/)
 - Deployed backend: [Heroku](https://final-app.herokuapp.com/)
-- Backend repo: [Github](https://github.com/Pedifax/Social-Network-Application-Backend)
+- Backend repo: [Github](https://github.com/Pedifax/Ricebook_Backend)
 
 ### Features:
 
@@ -30,7 +31,9 @@
 - A screenshot of Jest test result is down below
 
 ### Get Started:
+
 You can:
+
 - Register to create a new account
 - Log in with Google OAuth
 - Use the following test accounts:
@@ -42,23 +45,25 @@ You can:
 ### Screenshots:
 
 #### Feed
+
 - Overview
-![image-feed-1](/screenshots/image-feed-1.png)
+  ![image-feed-1](/screenshots/image-feed-1.png)
 
 - Creating a post
-![image-feed-1-1](/screenshots/image-feed-1-1.png)
+  ![image-feed-1-1](/screenshots/image-feed-1-1.png)
 
 - Editting a post
-![image-feed-2](/screenshots/image-feed-2.png)
+  ![image-feed-2](/screenshots/image-feed-2.png)
 
-- Editing a comment 
-![image-feed-3](/screenshots/image-feed-3.png)
-  
+- Editing a comment
+  ![image-feed-3](/screenshots/image-feed-3.png)
 
 #### Authentication
+
 - Login
-  
+
 ![image-login](/screenshots/image-login.png)
+
 - Register
 
 ![image-register](/screenshots/image-register.png)

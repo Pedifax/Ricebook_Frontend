@@ -20,7 +20,7 @@
   - Register an account
   - Login
   - Article CRUD
-    - Image upload (to Cloudinary)
+    - Image upload
   - Profile update
   - Friend following
   - Article searching

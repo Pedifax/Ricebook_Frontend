@@ -1,14 +1,8 @@
 ![image-logo](/screenshots/image-logo.png)
 
-# Ricebook: Social Media Web App
+# [Ricebook: Social Media Web App](https://ricebook-bk.surge.sh/)
 
-### This is the front-end repo of Ricebook
-
-### Links
-
-- Deployed forntend site: [Surge](https://ricebook-bk.surge.sh/)
-- Deployed backend: [Heroku](https://final-app.herokuapp.com/)
-- Backend repo: [Github](https://github.com/Pedifax/Ricebook_Backend)
+- Link to backend repo: [Github](https://github.com/Pedifax/Ricebook_Backend)
 
 ### Features:
 
